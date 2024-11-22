@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Copy Java Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #000;
+            color: #656565;
+        }
+        .code-container {
+            position: relative;
+            background-color: #212121;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: Consolas, "Courier New", monospace;
+            overflow-x: auto;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #656565;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .copy-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Java Code Example</h1>
+    <p>Click the button to copy the Java code:</p>
+
+
+    <h1>Karatsuba</h1>
+    <div class="code-container">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        <pre id="code">
+            import java.math.BigInteger;
+            import java.util.Scanner;
+            
+            public class KaratsubaSquare {
+            
+                // Karatsuba multiplication to calculate the square of a number
+                static BigInteger karatsuba(BigInteger X) {
+                    // Base case: if the number is small enough (single digit), simply square it
+                    if (X.compareTo(BigInteger.TEN) < 0) {
+                        return X.multiply(X);
+                    }
+            
+                    // Determine the size of X
+                    int size = X.toString().length();
+                    int halfSize = (size / 2) + (size % 2);  // Ceiling division of size by 2
+                    
+                    // Create a multiplier to split the number
+                    BigInteger multiplier = BigInteger.TEN.pow(halfSize);
+                    
+                    // Split the number X into two parts
+                    BigInteger a = X.divide(multiplier);  // The higher part
+                    BigInteger b = X.subtract(a.multiply(multiplier));  // The lower part (X - a * multiplier)
+            
+                    // Recursively calculate three products
+                    BigInteger p1 = karatsuba(a);  // a^2
+                    BigInteger p2 = karatsuba(b);  // b^2
+                    BigInteger p3 = karatsuba(a.add(b));  // (a + b)^2
+                    
+                    // The final square is p1 * (10^2 * p3 - p2) + p2
+                    return p1.multiply(BigInteger.TEN.pow(2 * halfSize))
+                            .add(p3.subtract(p1).subtract(p2).multiply(BigInteger.TEN.pow(halfSize)))
+                            .add(p2);
+                }
+            
+                public static void main(String[] args) {
+                    Scanner sc = new Scanner(System.in);
+                    
+                    // Input a 20-digit number
+                    System.out.print("Enter a 20-digit number: ");
+                    BigInteger x = sc.nextBigInteger();
+                    
+                    // Calculate and print the square using the Karatsuba algorithm
+                    BigInteger result = karatsuba(x);
+                    System.out.println("The square of the number is: " + result);
+                }
+            }
+            
+        </pre>
+    </div>
+
+    <h1>JobScheduling</h1>
+
+    <div class="code-container">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        <pre id="code">
+            import java.io.*;
+            import java.lang.*;
+            import java.util.*;
+            
+            class Job {
+               int id, profit, deadline;
+               Job(int x, int y, int z) {
+                  this.id = x;
+                  this.deadline = y;
+                  this.profit = z;
+               }
+            }
+            
+            class solve {
+               // return an array of size 2 having the 0th element equal to the count
+               // and 1st element equal to the maximum profit
+               int[] JobScheduling(Job arr[], int n) {
+                  // Sort jobs based on profit in descending order
+                  Arrays.sort(arr, (a, b) -> (b.profit - a.profit));
+            
+                  int maxi = 0;
+                  // Find the maximum deadline
+                  for (int i = 0; i < n; i++) {
+                     if (arr[i].deadline > maxi) {
+                        maxi = arr[i].deadline;
+                     }
+                  }
+            
+                  int result[] = new int[maxi + 1];
+                  // Initialize the result array with -1 to indicate no job is scheduled
+                  for (int i = 1; i <= maxi; i++) {
+                     result[i] = -1;
+                  }
+            
+                  int countJobs = 0, jobProfit = 0;
+                  List<Integer> scheduledJobs = new ArrayList<>();
+            
+                  // Loop through all the jobs
+                  for (int i = 0; i < n; i++) {
+                     // Find a free slot for the job
+                     for (int j = arr[i].deadline; j > 0; j--) {
+                        if (result[j] == -1) {
+                           // Schedule the job in the free slot
+                           result[j] = i;
+                           countJobs++;
+                           jobProfit += arr[i].profit;
+                           scheduledJobs.add(arr[i].id); // Add job ID to the list of scheduled jobs
+                           break;
+                        }
+                     }
+                  }
+            
+                  // Print the scheduled jobs
+                  System.out.println("Scheduled jobs: " + scheduledJobs);
+            
+                  int[] ans = new int[2];
+                  ans[0] = countJobs;
+                  ans[1] = jobProfit;
+            
+                  return ans;
+               }
+            }
+            
+            class JobSchedule {  // Main class name should match the file name
+                public static void main(String[] args) throws IOException {
+             
+                   // Read input for number of jobs
+                   Scanner sc = new Scanner(System.in);
+                   System.out.print("Enter number of jobs: ");
+                   int n = sc.nextInt();
+             
+                   Job[] arr = new Job[n];
+             
+                   // Read details for each job
+                   for (int i = 0; i < n; i++) {
+                      System.out.print("Enter job " + (i+1) + " details (id, deadline, profit): ");
+                      int id = sc.nextInt();
+                      int deadline = sc.nextInt();
+                      int profit = sc.nextInt();
+                      arr[i] = new Job(id, deadline, profit);
+                   }
+             
+                   solve ob = new solve();
+             
+                   // Function call
+                   int[] res = ob.JobScheduling(arr, n);
+             
+                   // Print the result (count of jobs and total profit)
+                   System.out.println("Number of jobs: " + res[0]);
+                   System.out.println("Total profit: " + res[1]);
+                }
+             }
+        </pre>
+        
+    </div>
+
+    <h1>Floyd Warshall</h1>
+
+    <div class="code-container">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+        <pre id="code">
+            import java.util.Scanner;
+
+public class OfficeConnection5 {
+    final static int INF = Integer.MAX_VALUE;
+    public static void floydWarshall(int graph[][],int V){
+        for (int k = 0; k < V; k++) {
+            for (int i = 0; i < V; i++) {
+                for (int j = 0; j < V; j++) {
+                    if(graph[i][k] != INF && graph[k][j] != INF && graph[i][j] > graph[i][k] + graph[k][j]){
+                        graph[i][j] = graph[i][k] + graph[k][j];
+                    }
+                }
+            }
+        }
+        printSolution(graph,V);
+    }
+    public static void printSolution(int graph[][],int V){
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                if(graph[i][j] == INF){
+                    System.out.print("INF");
+                }else{
+                    System.out.print(graph[i][j]+" ");
+                }
+            }
+            System.out.println();
+        }
+    }
+    public static void main(String[] args) {
+        Scanner obj = new Scanner(System.in);
+
+        System.out.println("Enter the number of vertex : ");
+        int V = obj.nextInt();
+        
+        int[][] graph = new int[V][V];
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                graph[i][j] = (i==j)?0:INF;
+            }
+        }
+
+        System.out.println("Enter the number of the connections : ");
+        int E = obj.nextInt();
+        System.out.println("Enter the input in the form <office 1> <office 2> <cost>");
+        for (int i = 0; i < E; i++) {
+            int u = obj.nextInt();
+            int v = obj.nextInt();
+            int cost = obj.nextInt();
+
+            if(u < V && v < V){
+                graph[u][v] = cost;
+                graph[v][u] = cost;
+            }else{
+                System.out.println("Invalid Input !!!");
+                return;
+            }
+        }
+        floydWarshall(graph, V);
+    }
+}
+        </pre>
+        
+    </div>
+
+</div>
+
+<h1>Dijsktra</h1>
+
+<div class="code-container">
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <pre id="code">
+        import java.util.Scanner;
+public class ShortestPath {
+    static int minDistance(int dist[], Boolean vis[]) {
+        int V = dist.length;
+        int min = Integer.MAX_VALUE, min_idx = -1;
+        
+        for (int v = 0; v < V; v++) {
+            if (!vis[v] && dist[v] <= min) {
+                min = dist[v];
+                min_idx = v;
+            }
+        }
+        return min_idx;
+    }
+    static void dijkstra(int graph[][], int src) {   
+        int V = graph.length;
+        int dist[] = new int[V];
+        Boolean vis[] = new Boolean[V];
+        for (int i = 0; i < V; i++) {
+            dist[i] = Integer.MAX_VALUE;
+            vis[i] = false;
+        }
+        dist[src] = 0;
+        for (int count = 0; count < V-1; count++) {
+            int u = minDistance(dist, vis);
+            vis[u] = true;
+            for (int v = 0; v < V; v++)
+                if ( !vis[v] && graph[u][v] != 0 
+                && dist[u] != Integer.MAX_VALUE 
+                && dist[v] > graph[u][v] + dist[u] )
+                    dist[v] = dist[u] + graph[u][v];
+        }
+        System.out.println(
+                "Node \t\t TravelTime from Source -> " + src);
+        for (int i = 0; i < V; i++)
+            System.out.println(i + " \t\t " + dist[i]);
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter number of Nodes : ");
+        int n = sc.nextInt();
+        System.out.print("Enter number of Edges : ");
+        int m = sc.nextInt();
+        int[][] graph = new int[n][n];
+        System.out.println("Enter edges in the format (u v w): ");
+        for (int i = 0; i < m; i++) {
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+            int w = sc.nextInt();
+            //Unidirected Graph
+            graph[u][v] = graph[v][u] = w;
+        }
+        System.out.print("Enter the source Node (K) : ");
+        int src = sc.nextInt();
+        dijkstra(graph, src);
+        sc.close();
+    }
+}
+    </pre>
+    
+</div>
+
+
+<h1>Knights Tour</h1>
+
+<div class="code-container">
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <pre id="code">
+        //import the necessary resources 
+import java.util.Arrays;
+import java.util.Scanner;
+//make the main class
+public class KnightTour1 {
+    //spcify the moves for the knight
+    private static final int[] moveX = {2,1,-1,-2,-2,-1,1,2};
+    private static final int[] moveY = {1,2,2,1,-1,-2,-2,-1};
+
+    //function to print the board after solving is done
+    private static void printBoard (int[][] board){
+        //Iterate over the board
+        for(int[] row :board){
+            //Iterate over the board 
+            for(int cell : row){
+                System.out.print(String.format("%2d",cell)+"");
+            }
+            System.out.println();
+        }
+    }
+    //Function to check is next postion is safe for the knight
+    private static boolean isSafe(int[][] board,int x,int y){
+        int size= board.length;
+        return x >= 0 && y >= 0 && x < size && y < size && board[x][y] == -1;
+    }
+    //Actual algorithm for the knight tour problem
+    private static boolean solveKnigtTour(int[][] board,int x,int y, int moveCount){
+        //write the base case of recursion
+        int size = board.length;
+        if(moveCount == size  * size) return true;
+        //check for all the 8 moves possible for the knight
+        for(int i = 0; i < 8;i++){
+            int nextX = x + moveX[i];
+            int nextY = y + moveY[i];
+            //use isSafe
+            if(isSafe(board, nextX, nextY)){
+                board[nextX][nextY] = moveCount;
+                if(solveKnigtTour(board, nextX, nextY, moveCount + 1)) return true;
+                board[nextX][nextY] = -1;
+            }
+        }
+        return false;
+    }
+    //Write the main method
+    public static void main(String[] args) {
+        //Initlize the scanner object 
+        Scanner obj = new Scanner(System.in);
+        //Take the input for the chessboard size
+        System.out.println("Enter the size of the chessboard (N) : ");
+        int size = obj.nextInt();
+        //Take the input for the starting postion
+        System.out.println("Enter the starting position (x,y)");
+        int startX = obj.nextInt();
+        int startY = obj.nextInt();
+        //check the validity for the input
+        if(size <= 0 || startX < 0 || startX >= size || startY < 0 || startY >= size){
+            System.out.println("Invalid board size or starting position !");
+            return;
+        }
+        //Intilize the chessboard with the size and fill slots of it with -1
+        int[][] board = new int[size][size];
+
+        for(int[] row : board){
+            Arrays.fill(row,-1);
+        }
+        //Initilize the first postion
+        board[startX][startY] = 0;
+        //call the function for the knight tour
+        if(solveKnigtTour(board, startX, startY, 1)){
+            printBoard(board);                  
+        }else{
+            System.out.println("No solution exists!!! ");
+        }
+    }
+}
+    </pre>
+    
+</div>
+
+
+<h1>Club</h1>
+
+<div class="code-container">
+    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    <pre id="code">
+        import java.util.Scanner;
+public class BranchAndBound {
+    public static int n; // Number of students and clubs
+    public static int[][] costMatrix; // Cost matrix
+    public static int[] finalAssignment; // Final assignment of students to clubs
+    public static int finalCost = Integer.MAX_VALUE; // Final minimum cost
+    // Calculate the lower bound for a given partial assignment
+    public static int bound(int mask, int[] assignment) {
+        int cost = 0;
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            if ((mask & (1 << i)) == 0) { // If student i is not assigned
+                int minCost = Integer.MAX_VALUE;
+                for (int j = 0; j < n; j++) {
+                    if ((mask & (1 << j)) == 0) { // If club j is not assigned
+                        minCost = Math.min(minCost, costMatrix[i][j]);
+                    }
+                }
+                cost += minCost;
+                count++;
+            }
+        }
+        return cost;
+    }
+    // Depth-first search to explore all possible assignments
+    public static void dfs(int mask, int[] assignment, int level, int currentCost) {
+        if (level == n) {
+            // All students assigned, check if current cost is less than final cost
+            if (currentCost < finalCost) {
+                finalCost = currentCost;
+                System.arraycopy(assignment, 0, finalAssignment, 0, n);
+            }
+            return;
+        }
+        // Bound the search space to avoid unnecessary exploration
+        int boundVal = bound(mask, assignment);
+        if (currentCost + boundVal < finalCost) {
+            for (int i = 0; i < n; i++) {
+                if ((mask & (1 << i)) == 0) { // If student i is not yet assigned
+                    assignment[level] = i;
+                    dfs(mask | (1 << i), assignment, level + 1, currentCost + costMatrix[level][i]);
+                }
+            }
+        }
+    }
+    // Main method to take input and solve the problem
+    public static void main(String[] args) {
+        Scanner obj = new Scanner(System.in);
+        // Take input for number of students and clubs
+        System.out.print("Enter the number of students (and clubs): ");
+        n = obj.nextInt();
+
+        // Initialize the cost matrix
+        costMatrix = new int[n][n];
+
+        // Input the cost matrix
+        System.out.println("Enter the cost matrix:");
+        for (int i = 0; i < n; i++) {
+            System.out.println("Enter the costs for Student " + (i + 1) + " (cost for each club):");
+            for (int j = 0; j < n; j++) {
+                System.out.print("Cost for Student " + (i + 1) + " to Club " + (j + 1) + ": ");
+                costMatrix[i][j] = obj.nextInt();
+            }
+        }
+        // Initialize the final assignment array
+        finalAssignment = new int[n];
+        // Start solving the problem
+        dfs(0, new int[n], 0, 0);
+        // Output the optimal assignment and total minimum cost
+        System.out.println("\nOptimal Assignment:");
+        for (int i = 0; i < n; i++) {
+            System.out.println("Student " + (i + 1) + " is assigned to Club " + (finalAssignment[i] + 1));
+        }
+        System.out.println("\nTotal minimum cost: " + finalCost);
+        obj.close();
+    }
+}
+    </pre>
+    
+</div>
+
+<script>
+    function copyCode(button) {
+        // Get the parent container of the button
+        const container = button.parentElement;
+        // Get the <pre> element containing the code
+        const codeElement = container.querySelector('pre');
+        // Select and copy the text content
+        const range = document.createRange();
+        range.selectNodeContents(codeElement);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        try {
+            document.execCommand("copy");
+            alert("Code copied to clipboard!");
+        } catch (err) {
+            alert("Failed to copy code.");
+        }
+        selection.removeAllRanges();
+    }
+</script>
+</body>
+</html>
